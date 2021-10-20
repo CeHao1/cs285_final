@@ -12,6 +12,9 @@ class SnakeBuilder:
         self.env.n_snakes = n_snakes
         self.env.n_foods = n_foods
 
+        self.env.unit_size=1
+        self.env.unit_gap=0
+
 
     def set_reward(self, dead, fruit, idle):
         self.env.set_reward(dead, fruit, idle)
