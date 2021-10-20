@@ -1,5 +1,10 @@
 # cs285_final
 
+## install env
+python 3.6 -3.8 anaconda env  
+cd to the repo, and run    
+``` pip install -e .  ```
+
 
 ## how to build snake
 See example in src/snake_example.py
