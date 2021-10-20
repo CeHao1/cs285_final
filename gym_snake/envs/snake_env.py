@@ -24,12 +24,20 @@ class SnakeEnv(gym.Env):
         self.action_space = Discrete(4)
         self.random_init = random_init
 
+        self.set_reward()
+
+    def set_reward(self, dead=-1, fruit=1, idle=0):
+        self.dead_reward = dead
+        self.fruit_reward = fruit
+        self.idle_reward = idle
+
     def step(self, action):
         self.last_obs, rewards, done, info = self.controller.step(action)
         return self.last_obs, rewards, done, info
 
     def reset(self):
-        self.controller = Controller(self.grid_size, self.unit_size, self.unit_gap, self.snake_size, self.n_snakes, self.n_foods, random_init=self.random_init)
+        self.controller = Controller(self.grid_size, self.unit_size, self.unit_gap, self.snake_size, self.n_snakes, self.n_foods, random_init=self.random_init,
+                                    dead_reward=self.dead_reward, fruit_reward=self.fruit_reward, idle_reward=self.idle_reward)
         self.last_obs = self.controller.grid.grid.copy()
         return self.last_obs
 

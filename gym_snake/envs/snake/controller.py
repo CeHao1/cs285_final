@@ -7,7 +7,8 @@ class Controller():
     This class combines the Snake, Food, and Grid classes to handle the game logic.
     """
 
-    def __init__(self, grid_size=[30,30], unit_size=10, unit_gap=1, snake_size=3, n_snakes=1, n_foods=1, random_init=True):
+    def __init__(self, grid_size=[30,30], unit_size=10, unit_gap=1, snake_size=3, n_snakes=1, n_foods=1, random_init=True,
+                    dead_reward=-1, fruit_reward=1, idle_reward=0):
 
         assert n_snakes < grid_size[0]//3
         assert n_snakes < 25
@@ -16,7 +17,9 @@ class Controller():
 
         self.snakes_remaining = n_snakes
         self.grid = Grid(grid_size, unit_size, unit_gap)
-        self.set_reward()
+        self.dead_reward = dead_reward
+        self.fruit_reward = fruit_reward
+        self.idle_reward = idle_reward
 
         self.snakes = []
         self.dead_snakes = []
@@ -36,10 +39,7 @@ class Controller():
             for i in range(n_foods):
                 self.grid.new_food()
 
-    def set_reward(self, dead=-1, fruit=1, idle=0):
-        self.dead_reward = dead
-        self.fruit_reward = fruit
-        self.idle_reward = idle
+
 
     def move_snake(self, direction, snake_idx):
         """
