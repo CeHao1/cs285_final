@@ -1,7 +1,3 @@
-import gym
-import gym_snake
-
-import time
 import matplotlib.pyplot as plt
 from gym_snake.snake_builder import SnakeBuilder
 
