@@ -13,7 +13,13 @@ except ImportError as e:
 class SnakeEnv(gym.Env):
     metadata = {'render.modes': ['human']}
 
-    def __init__(self, grid_size=[15,15], unit_size=10, unit_gap=1, snake_size=3, n_snakes=1, n_foods=1, random_init=True):
+    def __init__(self):
+        print('---------- initilize snake setting -----------')
+        self.set_parameters()
+        self.set_reward()
+        print('------------- End snake setting --------------\n')
+    
+    def set_parameters(self, grid_size=[15,15], unit_size=1, unit_gap=0, snake_size=3, n_snakes=1, n_foods=1, random_init=True):
         self.grid_size = grid_size
         self.unit_size = unit_size
         self.unit_gap = unit_gap
@@ -23,13 +29,13 @@ class SnakeEnv(gym.Env):
         self.viewer = None
         self.action_space = Discrete(4)
         self.random_init = random_init
-
-        self.set_reward()
+        print('Set parameters, grid_size: {}, snake_size: {}, n_snakes: {}, n_foods: {}'.format(grid_size, snake_size, n_snakes, n_foods))
 
     def set_reward(self, dead=-1, fruit=1, idle=0):
         self.dead_reward = dead
         self.fruit_reward = fruit
         self.idle_reward = idle
+        print('Set reward, dead: {}, fruit: {}, idle: {}'.format(dead, fruit, idle))
 
     def step(self, action):
         self.last_obs, rewards, done, info = self.controller.step(action)

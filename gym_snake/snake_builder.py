@@ -7,14 +7,8 @@ import time
 class SnakeBuilder:
     def __init__(self, grid_size=[10, 10], snake_size=3, n_snakes=1, n_foods=1):
         self.env = gym.make('snake-v0')
-        self.env.grid_size=grid_size 
-        self.env.snake_size = snake_size
-        self.env.n_snakes = n_snakes
-        self.env.n_foods = n_foods
 
-        self.env.unit_size=1
-        self.env.unit_gap=0
-
+        self.env.set_parameters(grid_size=grid_size, snake_size=snake_size, n_snakes=n_snakes, n_foods=n_foods)
 
     def set_reward(self, dead, fruit, idle):
         self.env.set_reward(dead, fruit, idle)
