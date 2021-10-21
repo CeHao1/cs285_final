@@ -32,21 +32,21 @@ class SnakeEnv(gym.Env):
         self.random_init = random_init
         print('Set parameters, grid_size: {}, snake_size: {}, n_snakes: {}, n_foods: {}'.format(grid_size, snake_size, n_snakes, n_foods))
 
-    def set_reward(self, dead=-1, fruit=1, idle=0):
+    def set_reward(self, dead=-1, food=1, idle=0):
         self.dead_reward = dead
-        self.fruit_reward = fruit
+        self.food_reward = food
         self.idle_reward = idle
-        print('Set reward, dead: {}, fruit: {}, idle: {}'.format(dead, fruit, idle))
+        print('Set reward, dead: {}, food: {}, idle: {}'.format(dead, food, idle))
 
     def step(self, action):
         self.last_obs, rewards, done, info = self.controller.step(action)
-        return self.obs_wapper(self.last_obs), rewards, done, info
+        return self.obs_wapper(), rewards, done, info
 
     def reset(self):
         self.controller = Controller(self.grid_size, self.unit_size, self.unit_gap, self.snake_size, self.n_snakes, self.n_foods, random_init=self.random_init,
-                                    dead_reward=self.dead_reward, fruit_reward=self.fruit_reward, idle_reward=self.idle_reward)
+                                    dead_reward=self.dead_reward, food_reward=self.food_reward, idle_reward=self.idle_reward)
         self.last_obs = self.controller.grid.grid.copy()
-        return self.obs_wapper(self.last_obs)
+        return self.obs_wapper()
 
     def render(self, mode='human', close=False, frame_speed=.1):
         if self.viewer is None:
@@ -68,5 +68,14 @@ class SnakeEnv(gym.Env):
         wrapped_obs.dtype = np.uint8
         return wrapped_obs
 
+    def get_color(self):
+        color_map = {'snake_head':[], 'snake_body':[], 'food': None, 'space': None}
+        color_map['food'] = np.array(255, dtype=np.uint8) - self.controller.grid.FOOD_COLOR
+        color_map['space'] = np.array(255, dtype=np.uint8) - self.controller.grid.SPACE_COLOR
 
+        for snake in self.controller.snakes:
+            color_map['snake_head'].append( np.array(255, dtype=np.uint8) - snake.head_color)
+            color_map['snake_body'].append( np.array(255, dtype=np.uint8) - snake.body_color)
 
+        print(color_map)
+        return color_map
