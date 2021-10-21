@@ -1,5 +1,7 @@
 # gym-snake
 
+https://github.com/grantsrb/Gym-Snake
+
 #### Created in response to OpenAI's [Requests for Research 2.0](https://blog.openai.com/requests-for-research-2/)
 
 ## Description
