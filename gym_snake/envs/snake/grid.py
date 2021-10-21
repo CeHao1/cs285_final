@@ -12,10 +12,15 @@ class Grid():
     It is also assumed that HEAD_COLOR has a 255 value as its 0 channel.
     """
 
-    BODY_COLOR = np.array([1,0,0], dtype=np.uint8)
-    HEAD_COLOR = np.array([255, 0, 0], dtype=np.uint8)
-    FOOD_COLOR = np.array([0,0,255], dtype=np.uint8)
-    SPACE_COLOR = np.array([0,255,0], dtype=np.uint8)
+    # BODY_COLOR = np.array([1,0,0], dtype=np.uint8)
+    # HEAD_COLOR = np.array([255, 0, 0], dtype=np.uint8)
+    # FOOD_COLOR = np.array([0,0,255], dtype=np.uint8)
+    # SPACE_COLOR = np.array([0,255,0], dtype=np.uint8)
+
+    BODY_COLOR = np.array([200, 200, 255], dtype=np.uint8)
+    HEAD_COLOR = np.array([100, 100, 255], dtype=np.uint8)
+    FOOD_COLOR = np.array([0, 255,255], dtype=np.uint8)
+    SPACE_COLOR = np.array([255,255,255], dtype=np.uint8)
 
     def __init__(self, grid_size=[30,30], unit_size=10, unit_gap=1):
         """
@@ -116,7 +121,7 @@ class Grid():
             return False
 
 
-    def draw_snake(self, snake, head_color=HEAD_COLOR):
+    def draw_snake(self, snake, head_color=HEAD_COLOR, body_color=BODY_COLOR):
         """
         Draws a snake with the given head color.
 
@@ -128,12 +133,12 @@ class Grid():
         prev_coord = None
         for i in range(len(snake.body)):
             coord = snake.body.popleft()
-            self.draw(coord, self.BODY_COLOR)
+            self.draw(coord, body_color)
             if prev_coord is not None:
-                self.connect(prev_coord, coord, self.BODY_COLOR)
+                self.connect(prev_coord, coord, body_color)
             snake.body.append(coord)
             prev_coord = coord
-        self.connect(prev_coord, snake.head, self.BODY_COLOR)
+        self.connect(prev_coord, snake.head, body_color)
 
     def erase(self, coord):
         """

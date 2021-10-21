@@ -3,6 +3,7 @@ import gym
 from gym import error, spaces, utils
 from gym.utils import seeding
 from gym_snake.envs.snake import Controller, Discrete
+import numpy as np
 
 try:
     import matplotlib.pyplot as plt
@@ -61,3 +62,11 @@ class SnakeEnv(gym.Env):
 
     def seed(self, x):
         pass
+
+    def obs_wapper(self):
+        # last_obs -> new obs
+
+        wrapped_obs = np.zeros(1)
+
+        # fruit 
+
