@@ -40,13 +40,13 @@ class SnakeEnv(gym.Env):
 
     def step(self, action):
         self.last_obs, rewards, done, info = self.controller.step(action)
-        return self.last_obs, rewards, done, info
+        return self.obs_wapper(self.last_obs), rewards, done, info
 
     def reset(self):
         self.controller = Controller(self.grid_size, self.unit_size, self.unit_gap, self.snake_size, self.n_snakes, self.n_foods, random_init=self.random_init,
                                     dead_reward=self.dead_reward, fruit_reward=self.fruit_reward, idle_reward=self.idle_reward)
         self.last_obs = self.controller.grid.grid.copy()
-        return self.last_obs
+        return self.obs_wapper(self.last_obs)
 
     def render(self, mode='human', close=False, frame_speed=.1):
         if self.viewer is None:
@@ -64,9 +64,9 @@ class SnakeEnv(gym.Env):
         pass
 
     def obs_wapper(self):
-        # last_obs -> new obs
+        wrapped_obs = np.ones(self.last_obs.shape, dtype=np.uint8) * 255 - self.last_obs
+        wrapped_obs.dtype = np.uint8
+        return wrapped_obs
 
-        wrapped_obs = np.zeros(1)
 
-        # fruit 
 
