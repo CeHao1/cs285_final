@@ -10,8 +10,8 @@ class SnakeBuilder:
 
         self.env.set_parameters(grid_size=grid_size, snake_size=snake_size, n_snakes=n_snakes, n_foods=n_foods)
 
-    def set_reward(self, dead, fruit, idle):
-        self.env.set_reward(dead, fruit, idle)
+    def set_reward(self, dead, food, idle):
+        self.env.set_reward(dead, food, idle)
 
     def test_env(self, max_iteration=1000):
         observation = self.env.reset()

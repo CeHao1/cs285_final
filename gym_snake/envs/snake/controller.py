@@ -8,7 +8,7 @@ class Controller():
     """
 
     def __init__(self, grid_size=[30,30], unit_size=10, unit_gap=1, snake_size=3, n_snakes=1, n_foods=1, random_init=True,
-                    dead_reward=-1, fruit_reward=1, idle_reward=0):
+                    dead_reward=-1, food_reward=1, idle_reward=0):
 
         assert n_snakes < grid_size[0]//3
         assert n_snakes < 25
@@ -18,17 +18,18 @@ class Controller():
         self.snakes_remaining = n_snakes
         self.grid = Grid(grid_size, unit_size, unit_gap)
         self.dead_reward = dead_reward
-        self.fruit_reward = fruit_reward
+        self.food_reward = food_reward
         self.idle_reward = idle_reward
 
         self.snakes = []
         self.dead_snakes = []
         for i in range(1,n_snakes+1):
             start_coord = [i*grid_size[0]//(n_snakes+1), snake_size+1]
-            self.snakes.append(Snake(start_coord, snake_size))
-            color = [self.grid.HEAD_COLOR[0], i*10, 0]
-            self.snakes[-1].head_color = color
-            self.grid.draw_snake(self.snakes[-1], color)
+            head_color = [self.grid.HEAD_COLOR[0], self.grid.HEAD_COLOR[1] - i*10, 0]
+            body_color = [self.grid.BODY_COLOR[0], self.grid.BODY_COLOR[1] - i*10, 0]
+            self.snakes.append(Snake(start_coord, snake_size, head_color, body_color))
+
+            self.grid.draw_snake(self.snakes[-1], self.snakes[-1].head_color, self.snakes[-1].body_color)
             self.dead_snakes.append(None)
 
         if not random_init:
@@ -81,7 +82,7 @@ class Controller():
             self.grid.draw(snake.body[0], self.grid.BODY_COLOR) # Redraw tail
             self.grid.connect(snake.body[0], snake.body[1], self.grid.BODY_COLOR)
             self.grid.cover(snake.head, snake.head_color) # Avoid miscount of grid.open_space
-            reward = self.fruit_reward
+            reward = self.food_reward
             self.grid.new_food()
         else:
             reward = self.idle_reward
