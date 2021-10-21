@@ -77,5 +77,5 @@ class SnakeEnv(gym.Env):
             color_map['snake_head'].append( np.array(255, dtype=np.uint8) - snake.head_color)
             color_map['snake_body'].append( np.array(255, dtype=np.uint8) - snake.body_color)
 
-        print(color_map)
+        # print(color_map)
         return color_map
