@@ -65,6 +65,7 @@ class SnakeEnv(gym.Env):
 
     def obs_wapper(self):
         wrapped_obs = np.ones(self.last_obs.shape, dtype=np.uint8) * 255 - self.last_obs
+        wrapped_obs = np.ndarray.flatten(wrapped_obs)
         wrapped_obs.dtype = np.uint8
         return wrapped_obs
 

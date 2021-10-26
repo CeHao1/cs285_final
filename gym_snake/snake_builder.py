@@ -5,9 +5,8 @@ import time
 
 
 class SnakeBuilder:
-    def __init__(self, grid_size=[10, 10], snake_size=3, n_snakes=1, n_foods=1):
+    def __init__(self, grid_size=[15, 15], snake_size=3, n_snakes=1, n_foods=1):
         self.env = gym.make('snake-v0')
-
         self.env.set_parameters(grid_size=grid_size, snake_size=snake_size, n_snakes=n_snakes, n_foods=n_foods)
 
     def set_reward(self, dead, food, idle):
@@ -21,7 +20,6 @@ class SnakeBuilder:
             obs, rewards, done, info = self.env.step(actions)
             self.env.render()
             print('rewards at iter {}: {}'.format(iter, rewards))
-            time.sleep(0.01)
 
             if done:
                 print('!! game is done')
