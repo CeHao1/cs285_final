@@ -122,7 +122,9 @@ class Controller():
 
         rewards = []
 
-        if type(directions) == type(int()):
+        # if type(directions) == type(int()):
+        #     directions = [directions]
+        if not isinstance(directions, list):
             directions = [directions]
 
         for i, direction in enumerate(directions):
