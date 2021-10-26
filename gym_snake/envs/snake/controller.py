@@ -8,7 +8,7 @@ class Controller():
     """
 
     def __init__(self, grid_size=[30,30], unit_size=10, unit_gap=1, snake_size=3, n_snakes=1, n_foods=1, random_init=True,
-                    dead_reward=-1, food_reward=1, idle_reward=0):
+                    dead_reward=-1, food_reward=1, idle_reward=0, dist_reward=0.1):
 
         assert n_snakes < grid_size[0]//3
         assert n_snakes < 25
@@ -20,6 +20,7 @@ class Controller():
         self.dead_reward = dead_reward
         self.food_reward = food_reward
         self.idle_reward = idle_reward
+        self.dist_reward = dist_reward
 
         self.snakes = []
         self.dead_snakes = []
@@ -92,6 +93,11 @@ class Controller():
 
         self.grid.connect(snake.body[-1], snake.head, self.grid.BODY_COLOR)
 
+        if self.dist_reward !=0:
+            food_coord = self.grid.food_coords()
+            reward_dist = self.distance_reward(snake.head, food_coord)
+            reward += reward_dist
+
         return reward
 
     def kill_snake(self, snake_idx):
@@ -138,3 +144,15 @@ class Controller():
             return self.grid.grid.copy(), rewards[0], done, {"snakes_remaining":self.snakes_remaining}
         else:
             return self.grid.grid.copy(), rewards, done, {"snakes_remaining":self.snakes_remaining}
+
+
+    # extra rewards
+
+    def distance_reward(self, head, food_coords):
+
+        dist = np.sqrt( (head[0] - food_coords[:,0])**2 + (head[1] - food_coords[:,1])**2)
+        min_dist = np.min(dist)
+        dist_reward = 1/min_dist * self.dist_reward
+
+        # print('min dist ', min_dist)
+        return dist_reward
