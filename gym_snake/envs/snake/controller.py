@@ -8,7 +8,7 @@ class Controller():
     """
 
     def __init__(self, grid_size=[30,30], unit_size=10, unit_gap=1, snake_size=3, n_snakes=1, n_foods=1, random_init=True,
-                    dead_reward=-1, food_reward=1, idle_reward=0, dist_reward=0.1):
+                    dead_reward=-1, food_reward=1, idle_reward=0, dist_reward=0):
 
         assert n_snakes < grid_size[0]//3
         assert n_snakes < 25
@@ -149,10 +149,9 @@ class Controller():
     # extra rewards
 
     def distance_reward(self, head, food_coords):
-
         dist = np.sqrt( (head[0] - food_coords[:,0])**2 + (head[1] - food_coords[:,1])**2)
         min_dist = np.min(dist)
         dist_reward = 1/min_dist * self.dist_reward
 
-        # print('min dist ', min_dist)
+        print('min dist ', min_dist)
         return dist_reward
