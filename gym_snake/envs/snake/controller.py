@@ -152,6 +152,5 @@ class Controller():
         dist = np.sqrt( (head[0] - food_coords[:,0])**2 + (head[1] - food_coords[:,1])**2)
         min_dist = np.min(dist)
         dist_reward = 1/min_dist * self.dist_reward
-
-        print('min dist ', min_dist)
+        # print('min dist ', min_dist)
         return dist_reward
