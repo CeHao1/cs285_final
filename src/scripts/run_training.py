@@ -87,6 +87,7 @@ def main():
     parser.add_argument('--dead', type=float, default=-10)
     parser.add_argument('--food', type=float, default=10)
     parser.add_argument('--idle', type=float, default=-0.01)
+    parser.add_argument('--dist', type=float, default= 0.05)
 
     parser.add_argument('--save_params', action='store_true')
 

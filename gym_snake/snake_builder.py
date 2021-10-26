@@ -9,8 +9,8 @@ class SnakeBuilder:
         self.env = gym.make('snake-v0')
         self.env.set_parameters(grid_size=grid_size, snake_size=snake_size, n_snakes=n_snakes, n_foods=n_foods)
 
-    def set_reward(self, dead, food, idle):
-        self.env.set_reward(dead, food, idle)
+    def set_reward(self, dead, food, idle, dist=0.2):
+        self.env.set_reward(dead, food, idle, dist)
 
     def test_env(self, max_iteration=1000):
         observation = self.env.reset()

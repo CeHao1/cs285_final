@@ -193,6 +193,15 @@ class Grid():
         for i in range(len(snake.body)):
             self.erase(snake.body.popleft())
 
+    def food_coords(self):
+        food_coord = []
+        for i in range(self.grid_size[0]):
+            for j in range(self.grid_size[1]):
+                if self.food_space([i,j]):
+                    food_coord.append([i,j])
+                    # print('food is on ', [i,j])
+        return np.array(food_coord)
+
     def food_space(self, coord):
         """
         Checks if argued coord is snake food

@@ -32,11 +32,12 @@ class SnakeEnv(gym.Env):
         self.random_init = random_init
         print('Set parameters, grid_size: {}, snake_size: {}, n_snakes: {}, n_foods: {}'.format(grid_size, snake_size, n_snakes, n_foods))
 
-    def set_reward(self, dead=-1, food=1, idle=0):
+    def set_reward(self, dead=-1, food=1, idle=0, dist=0):
         self.dead_reward = dead
         self.food_reward = food
         self.idle_reward = idle
-        print('Set reward, dead: {}, food: {}, idle: {}'.format(dead, food, idle))
+        self.dist_reward = dist
+        print('Set reward, dead: {}, food: {}, idle: {}, dist: {}'.format(dead, food, idle, dist))
 
     def step(self, action):
         self.last_obs, rewards, done, info = self.controller.step(action)
@@ -44,7 +45,7 @@ class SnakeEnv(gym.Env):
 
     def reset(self):
         self.controller = Controller(self.grid_size, self.unit_size, self.unit_gap, self.snake_size, self.n_snakes, self.n_foods, random_init=self.random_init,
-                                    dead_reward=self.dead_reward, food_reward=self.food_reward, idle_reward=self.idle_reward)
+                                    dead_reward=self.dead_reward, food_reward=self.food_reward, idle_reward=self.idle_reward, dist_reward=self.dist_reward)
         self.last_obs = self.controller.grid.grid.copy()
         return self.obs_wapper()
 
