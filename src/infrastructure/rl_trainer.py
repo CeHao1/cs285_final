@@ -87,7 +87,7 @@ class RL_Trainer(object):
         self.total_envsteps = 0
         self.start_time = time.time()
 
-        print_period = 1
+        print_period = 5
 
         for itr in range(n_iter):
             if itr % print_period == 0:
