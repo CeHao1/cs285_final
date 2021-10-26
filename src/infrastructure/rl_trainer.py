@@ -46,6 +46,7 @@ class RL_Trainer(object):
 
         # Make the gym environment
         self.env = gym.make('snake-v0')
+        self.env.set_parameters(grid_size=self.params['grid_size'])
         self.env.set_reward(dead=self.params['dead'], food=self.params['food'], idle=self.params['idle'], dist=self.params['dist'])
         self.env.seed(seed)
 
@@ -154,7 +155,7 @@ class RL_Trainer(object):
             train_video_paths: paths which also contain videos for visualization purposes
         """
 
-        print("\nCollecting data to be used for training...")
+        # print("\nCollecting data to be used for training...")
         paths, envsteps_this_batch = utils.sample_trajectories(self.env, collect_policy, self.params['batch_size'], self.params['ep_len'])
 
         # collect more rollouts with the same policy, to be saved as videos in tensorboard

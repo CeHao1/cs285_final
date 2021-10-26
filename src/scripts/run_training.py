@@ -84,10 +84,12 @@ def main():
     parser.add_argument('--video_log_freq', type=int, default=-1)
     parser.add_argument('--scalar_log_freq', type=int, default=10)
 
+    parser.add_argument('--grid_size', type=float, default=[10, 10])
+
     parser.add_argument('--dead', type=float, default=-100)
     parser.add_argument('--food', type=float, default=10)
     parser.add_argument('--idle', type=float, default=-0.01)
-    parser.add_argument('--dist', type=float, default= 0.05)
+    parser.add_argument('--dist', type=float, default= 0.3)
 
     parser.add_argument('--save_params', action='store_true')
 
