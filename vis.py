@@ -85,12 +85,9 @@ def plot_reward(ax, iterations, rewards, name, color):
 
 
 def main():
-    # # q2
     tag_space = ['Train_EnvstepsSoFar', 'Exploitation_Data_q-values', 'Train_AverageReturn', 'Eval_AverageReturn']
 
-
     file_name_a = ['todo']
-    # 
     data_dict_a = log_rewards(file_name_a, tag_space)
 
     iterations = data_dict_a['Train_EnvstepsSoFar'][0]

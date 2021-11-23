@@ -60,6 +60,7 @@ class SnakeEnv(gym.Env):
             self.viewer.imshow(self.last_obs)
             plt.pause(frame_speed)
         self.fig.canvas.draw()
+        return self.last_obs
 
     def seed(self, x):
         pass

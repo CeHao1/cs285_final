@@ -230,6 +230,7 @@ class RL_Trainer(object):
 
             #save train/eval videos
             print('\nSaving train rollouts as videos...')
+            self.fps = 10
             self.logger.log_paths_as_videos(train_video_paths, itr, fps=self.fps, max_videos_to_save=MAX_NVIDEO,
                                             video_title='train_rollouts')
             self.logger.log_paths_as_videos(eval_video_paths, itr, fps=self.fps,max_videos_to_save=MAX_NVIDEO,
