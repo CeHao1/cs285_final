@@ -69,36 +69,39 @@ class Controller():
 
         snake = self.snakes[snake_idx]
         if type(snake) == type(None):
-            return 0
+            return 0, 0
 
         # Check for death of snake
-        if self.grid.check_death(snake.head):
+        if self.grid.check_death(snake.head): # dead
             self.dead_snakes[snake_idx] = self.snakes[snake_idx]
             self.snakes[snake_idx] = None
             self.grid.cover(snake.head, snake.head_color) # Avoid miscount of grid.open_space
             self.grid.connect(snake.body.popleft(), snake.body[0], self.grid.SPACE_COLOR)
             reward = self.dead_reward
+            ate_food = 0
         # Check for reward
-        elif self.grid.food_space(snake.head):
+        elif self.grid.food_space(snake.head): # eat food
             self.grid.draw(snake.body[0], self.grid.BODY_COLOR) # Redraw tail
             self.grid.connect(snake.body[0], snake.body[1], self.grid.BODY_COLOR)
             self.grid.cover(snake.head, snake.head_color) # Avoid miscount of grid.open_space
             reward = self.food_reward
+            ate_food = 1
             self.grid.new_food()
         else:
-            reward = self.idle_reward
+            reward = self.idle_reward # idle
+            ate_food = 0
             empty_coord = snake.body.popleft()
             self.grid.connect(empty_coord, snake.body[0], self.grid.SPACE_COLOR)
             self.grid.draw(snake.head, snake.head_color)
 
         self.grid.connect(snake.body[-1], snake.head, self.grid.BODY_COLOR)
 
-        if self.dist_reward !=0:
+        if self.dist_reward !=0: # dist reward
             food_coord = self.grid.food_coords()
             reward_dist = self.distance_reward(snake.head, food_coord)
             reward += reward_dist
 
-        return reward
+        return reward, ate_food
 
     def kill_snake(self, snake_idx):
         """
@@ -121,12 +124,17 @@ class Controller():
 
         # Ensure no more play until reset
         if self.snakes_remaining < 1 or self.grid.open_space < 1:
+
+            info = {"snakes_remaining":self.snakes_remaining, 
+                "ate_foods": [0]}
+
             if type(directions) == type(int()) or len(directions) is 1:
-                return self.grid.grid.copy(), 0, True, {"snakes_remaining":self.snakes_remaining}
+                return self.grid.grid.copy(), 0, True, info
             else:
-                return self.grid.grid.copy(), [0]*len(directions), True, {"snakes_remaining":self.snakes_remaining}
+                return self.grid.grid.copy(), [0]*len(directions), True, info
 
         rewards = []
+        ate_foods = []
 
         # if type(directions) == type(int()):
         #     directions = [directions]
@@ -137,13 +145,19 @@ class Controller():
             if self.snakes[i] is None and self.dead_snakes[i] is not None:
                 self.kill_snake(i)
             self.move_snake(direction,i)
-            rewards.append(self.move_result(direction, i))
+            reward, ate_food = self.move_result(direction, i)
+            rewards.append(reward)
+            ate_foods.append(ate_food)
 
         done = self.snakes_remaining < 1 or self.grid.open_space < 1
+
+        info = {"snakes_remaining":self.snakes_remaining, 
+                "ate_foods": ate_foods}
+
         if len(rewards) is 1:
-            return self.grid.grid.copy(), rewards[0], done, {"snakes_remaining":self.snakes_remaining}
+            return self.grid.grid.copy(), rewards[0], done, info
         else:
-            return self.grid.grid.copy(), rewards, done, {"snakes_remaining":self.snakes_remaining}
+            return self.grid.grid.copy(), rewards, done, info
 
 
     # extra rewards
