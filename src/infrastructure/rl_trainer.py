@@ -94,25 +94,7 @@ class RL_Trainer(object):
             if itr % print_period == 0:
                 print("\n\n********** Iteration %i ************"%itr)
 
-            # decide if videos should be rendered/logged at this iteration
-            if itr % self.params['video_log_freq'] == 0 and self.params['video_log_freq'] != -1:
-                self.logvideo = True
-            else:
-                self.logvideo = False
-
-            if iter % self.params['save_agent_freq'] == 0 and self.params['save_agent_freq'] != -1:
-                self.save_agent = True
-            else:
-                self.save_agent = False
-
-            # decide if metrics should be logged
-            if self.params['scalar_log_freq'] == -1:
-                self.logmetrics = False
-            elif itr % self.params['scalar_log_freq'] == 0:
-                self.logmetrics = True
-            else:
-                self.logmetrics = False
-
+            # ======================================= training core ================================
             # collect trajectories, to be used for training
             use_batchsize = self.params['batch_size']
             if itr==0:
@@ -136,6 +118,31 @@ class RL_Trainer(object):
                 print("\nTraining agent...")
             all_logs = self.train_agent()
 
+            # ======================================= log and eval ================================
+            # decide if videos should be rendered/logged at this iteration
+            if itr % self.params['video_log_freq'] == 0 and self.params['video_log_freq'] != -1:
+                self.logvideo = True
+            else:
+                self.logvideo = False
+
+            # decide if metrics should be logged
+            if self.params['scalar_log_freq'] == -1:
+                self.logmetrics = False
+            elif itr % self.params['scalar_log_freq'] == 0:
+                self.logmetrics = True
+            else:
+                self.logmetrics = False
+
+            # decide if agent should be saved
+            if itr % self.params['save_agent_freq'] == 0 and self.params['save_agent_freq'] != -1:
+                self.save_agent = True
+            else:
+                self.save_agent = False
+
+            # decide if agent should be loaded
+            if self.params['load_agent_name'] != '':
+                self.agent.load_agent(self.params['load_agent_name'])
+
             # log/save
             if self.logvideo or self.logmetrics:
                 # perform logging
@@ -145,9 +152,9 @@ class RL_Trainer(object):
                 if self.params['save_params']:
                     self.agent.save('{}/agent_itr_{}.pt'.format(self.params['logdir'], itr))
 
-            if save_agent:
-                exp_name_iter = self.params['exp_name'] + '_' + str(iter)
-                self.agent.save_agent()
+            if self.save_agent:
+                exp_name_iter = self.params['exp_name'] + '_' + str(itr)
+                self.agent.save_agent(exp_name_iter)
 
     ####################################
     ####################################

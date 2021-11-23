@@ -38,7 +38,7 @@ class ACAgent(BaseAgent):
 
     def load_agent(self, name):
         self.actor = load_nn_frame(nn_type='actor', name=name)
-        self.critic = load_nn_frame()
+        self.critic = load_nn_frame(nn_type='critic', name=name)
 
     def train(self, ob_no, ac_na, re_n, next_ob_no, terminal_n):
         # for agent_params['num_critic_updates_per_agent_update'] steps,

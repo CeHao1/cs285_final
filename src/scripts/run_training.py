@@ -93,6 +93,7 @@ def main():
 
     parser.add_argument('--save_params', action='store_true')
     parser.add_argument('--save_agent_freq', type=int, default=-1)
+    parser.add_argument('--load_agent_name', type=str, default='')
 
     args = parser.parse_args()
 

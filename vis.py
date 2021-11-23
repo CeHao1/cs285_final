@@ -64,7 +64,6 @@ def set_plot_env(iterations, rewards_dict, exp_name, curve_names=None):
     plt.legend()
     ax.set_xlabel('Time steps')
     ax.set_ylabel('eval average return')
-#     ax.set_ylabel('q value')
     ax.set_title(exp_name +' experiment')
 
     exp_dir = 'plots/'
@@ -98,7 +97,7 @@ def main():
     for idx in range(len(file_name_a)):
         rewards_dict[file_name_a[idx]] = rewards_dict_a[idx]
 
-    set_plot_env(iterations, rewards_dict, 'q2 part3')
+    set_plot_env(iterations, rewards_dict, exp_name='q2 part3')
 
 if __name__ == "__main__":
     main()
