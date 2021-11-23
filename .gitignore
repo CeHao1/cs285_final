@@ -9,7 +9,7 @@ __pycache__/
 # data
 data/
 plots/
-NN/*
+NN/
 
 
 # Distribution / packaging

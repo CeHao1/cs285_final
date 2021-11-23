@@ -1,11 +1,17 @@
 import torch
-
+import os
 
 # this file is to save and load torch.nn parameters
 
 DIR = './NN/'
 
+def make_dir(file_dir):
+     isExists=os.path.exists(file_dir)
+     if not isExists:
+         os.makedirs(file_dir)
+
 def get_full_dir(nn_type, name):
+    make_dir(DIR)
     full_dir = DIR + nn_type + '_' + name + '.pkl'
     return full_dir
 
