@@ -8,6 +8,7 @@ from src.policies.MLP_policy import MLPPolicyAC
 from src.infrastructure import pytorch_util as ptu
 from .base_agent import BaseAgent
 
+from src.infrastructure.nn_manager import save_nn_frame, load_nn_frame
 
 class ACAgent(BaseAgent):
     def __init__(self, env, agent_params):
@@ -30,6 +31,14 @@ class ACAgent(BaseAgent):
         self.critic = BootstrappedContinuousCritic(self.agent_params)
 
         self.replay_buffer = ReplayBuffer()
+
+    def save_agent(self, name):
+        save_nn_frame(self.actor, nn_type='actor', name=name)
+        save_nn_frame(self.critic, nn_type='critic', name=name)
+
+    def load_agent(self, name):
+        self.actor = load_nn_frame(nn_type='actor', name=name)
+        self.critic = load_nn_frame()
 
     def train(self, ob_no, ac_na, re_n, next_ob_no, terminal_n):
         # for agent_params['num_critic_updates_per_agent_update'] steps,

@@ -3,6 +3,8 @@ import os
 
 # this file is to save and load torch.nn parameters
 
+
+# ========================= root operations ======================
 DIR = './NN/'
 
 def make_dir(file_dir):

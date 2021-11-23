@@ -92,6 +92,7 @@ def main():
     parser.add_argument('--dist', type=float, default= 0.3)
 
     parser.add_argument('--save_params', action='store_true')
+    parser.add_argument('--save_agent_freq', type=int, default=-1)
 
     args = parser.parse_args()
 

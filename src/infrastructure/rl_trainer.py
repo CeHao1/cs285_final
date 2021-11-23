@@ -100,6 +100,11 @@ class RL_Trainer(object):
             else:
                 self.logvideo = False
 
+            if iter % self.params['save_agent_freq'] == 0 and self.params['save_agent_freq'] != -1:
+                self.save_agent = True
+            else:
+                self.save_agent = False
+
             # decide if metrics should be logged
             if self.params['scalar_log_freq'] == -1:
                 self.logmetrics = False
@@ -139,6 +144,10 @@ class RL_Trainer(object):
 
                 if self.params['save_params']:
                     self.agent.save('{}/agent_itr_{}.pt'.format(self.params['logdir'], itr))
+
+            if save_agent:
+                exp_name_iter = self.params['exp_name'] + '_' + str(iter)
+                self.agent.save_agent()
 
     ####################################
     ####################################
