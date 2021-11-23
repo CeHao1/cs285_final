@@ -267,6 +267,10 @@ class RL_Trainer(object):
             train_ep_lens = [len(path["reward"]) for path in paths]
             eval_ep_lens = [len(eval_path["reward"]) for eval_path in eval_paths]
 
+            # ate_foods
+            train_ate_foods = [path["ate_foods"].sum() for path in paths]
+            eval_ate_foods = [eval_path["ate_foods"].sum() for eval_path in eval_paths]
+
             # decide what to log
             logs = OrderedDict()
             logs["Eval_AverageReturn"] = np.mean(eval_returns)
@@ -281,8 +285,19 @@ class RL_Trainer(object):
             logs["Train_MinReturn"] = np.min(train_returns)
             logs["Train_AverageEpLen"] = np.mean(train_ep_lens)
 
+            logs["Eval_AverageFood"] = np.mean(eval_ate_foods)
+            logs["Eval_StdFood"] = np.std(eval_ate_foods)
+            logs["Eval_MaxFood"] = np.max(eval_ate_foods)
+            logs["Eval_MinFood"] = np.min(eval_ate_foods)
+
+            logs["Train_AverageFood"] = np.mean(train_ate_foods)
+            logs["Train_StdFood"] = np.std(train_ate_foods)
+            logs["Train_MaxFood"] = np.max(train_ate_foods)
+            logs["Train_MinFood"] = np.min(train_ate_foods)
+
             logs["Train_EnvstepsSoFar"] = self.total_envsteps
             logs["TimeSinceStart"] = time.time() - self.start_time
+
             logs.update(last_log)
 
             if itr == 0:

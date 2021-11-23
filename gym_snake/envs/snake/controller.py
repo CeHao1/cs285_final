@@ -151,12 +151,16 @@ class Controller():
 
         done = self.snakes_remaining < 1 or self.grid.open_space < 1
 
-        info = {"snakes_remaining":self.snakes_remaining, 
-                "ate_foods": ate_foods}
-
         if len(rewards) is 1:
+            info = {"snakes_remaining":self.snakes_remaining, 
+                "ate_foods": ate_foods[0]}
+            # print('info1, ', info)    
             return self.grid.grid.copy(), rewards[0], done, info
+
         else:
+            info = {"snakes_remaining":self.snakes_remaining, 
+                "ate_foods": ate_foods}
+            # print('info2, ', info)
             return self.grid.grid.copy(), rewards, done, info
 
 
