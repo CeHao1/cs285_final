@@ -26,8 +26,19 @@ class Controller():
         self.dead_snakes = []
         for i in range(1,n_snakes+1):
             start_coord = [i*grid_size[0]//(n_snakes+1), snake_size+1]
-            head_color = [self.grid.HEAD_COLOR[0], self.grid.HEAD_COLOR[1] - i*10, 0]
-            body_color = [self.grid.BODY_COLOR[0], self.grid.BODY_COLOR[1] - i*10, 0]
+            # head_color = [self.grid.HEAD_COLOR[0], self.grid.HEAD_COLOR[1] - i*10, 0]
+            # body_color = [self.grid.BODY_COLOR[0], self.grid.BODY_COLOR[1] - i*10, 0]
+            head_color = self.grid.HEAD_COLOR
+            body_color = self.grid.BODY_COLOR
+
+            # head_color = [self.grid.HEAD_COLOR[0], self.grid.HEAD_COLOR[1] - i*10, self.grid.HEAD_COLOR[2]]
+            # body_color = [self.grid.BODY_COLOR[0], self.grid.BODY_COLOR[1] - i*10, self.grid.BODY_COLOR[2]]
+
+            # print('head color eq ',  head_color==head_color2)
+            # print('1 ', head_color)
+            # print('2 ', head_color2)
+
+
             self.snakes.append(Snake(start_coord, snake_size, head_color, body_color))
 
             self.grid.draw_snake(self.snakes[-1], self.snakes[-1].head_color, self.snakes[-1].body_color)
