@@ -17,7 +17,7 @@ def get_section_results(file, tags):
     # for e in tf.compat.v1.train.summary_iterator(file):
     for e in tf.train.summary_iterator(file):
         for v in e.summary.value:
-#             print(v.tag)
+            # print(v.tag)
             if v.tag in data_dict:
                 data_dict[v.tag].append(v.simple_value)
     data_dict = {tag: np.array(data_dict[tag]) for tag in data_dict}
@@ -84,12 +84,15 @@ def plot_reward(ax, iterations, rewards, name, color):
 
 
 def main():
-    tag_space = ['Train_EnvstepsSoFar', 'Exploitation_Data_q-values', 'Train_AverageReturn', 'Eval_AverageReturn']
+    tag_space = ['itr', 'Train_EnvstepsSoFar', 'Exploitation_Data_q-values', 'Train_AverageReturn', 'Eval_AverageReturn']
 
-    file_name_a = ['todo']
+    file_name_a = ['t2']
     data_dict_a = log_rewards(file_name_a, tag_space)
 
-    iterations = data_dict_a['Train_EnvstepsSoFar'][0]
+    # iterations = data_dict_a['Train_EnvstepsSoFar'][0]
+    # rewards_dict_a = data_dict_a['Eval_AverageReturn']
+
+    iterations = data_dict_a['itr'][0]
     rewards_dict_a = data_dict_a['Eval_AverageReturn']
 
 
@@ -97,7 +100,7 @@ def main():
     for idx in range(len(file_name_a)):
         rewards_dict[file_name_a[idx]] = rewards_dict_a[idx]
 
-    set_plot_env(iterations, rewards_dict, exp_name='q2 part3')
+    set_plot_env(iterations, rewards_dict, exp_name='xx')
 
 if __name__ == "__main__":
     main()

@@ -158,7 +158,6 @@ class RL_Trainer(object):
             if self.save_agent:
                 exp_name_iter = self.params['exp_name'] + '_' + str(itr)
                 self.agent.save_agent(exp_name_iter)
-                # self.agent.load_agent(exp_name_iter)
 
     ####################################
     ####################################
@@ -274,6 +273,7 @@ class RL_Trainer(object):
 
             # decide what to log
             logs = OrderedDict()
+            logs['itr'] = itr
             logs["Eval_AverageReturn"] = np.mean(eval_returns)
             logs["Eval_StdReturn"] = np.std(eval_returns)
             logs["Eval_MaxReturn"] = np.max(eval_returns)

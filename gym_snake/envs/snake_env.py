@@ -19,6 +19,7 @@ class SnakeEnv(gym.Env):
         self.set_parameters()
         self.set_reward()
         print('------------- End snake setting --------------\n')
+        
     
     def set_parameters(self, grid_size=[15,15], unit_size=1, unit_gap=0, snake_size=3, n_snakes=1, n_foods=1, random_init=True):
         self.grid_size = grid_size
@@ -66,9 +67,17 @@ class SnakeEnv(gym.Env):
         pass
 
     def obs_wapper(self):
-        wrapped_obs = np.ones(self.last_obs.shape, dtype=np.uint8) * 255 - self.last_obs
+        # only fetch one layer of image
+        single_layer_obs = self.last_obs[:,:,:]
+        # print(single_layer_obs.shape)
+
+        # single_layer_obs = self.last_obs
+
+        wrapped_obs = np.ones(single_layer_obs.shape, dtype=np.uint8) * 255 - single_layer_obs
         wrapped_obs = np.ndarray.flatten(wrapped_obs)
         wrapped_obs.dtype = np.uint8
+
+        # print('wrapped_obs ', wrapped_obs)
         return wrapped_obs
 
     def get_color(self):
