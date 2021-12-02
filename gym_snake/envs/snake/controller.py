@@ -10,9 +10,9 @@ class Controller():
     def __init__(self, grid_size=[30,30], unit_size=10, unit_gap=1, snake_size=3, n_snakes=1, n_foods=1, random_init=True,
                     dead_reward=-1, food_reward=1, idle_reward=0, dist_reward=0):
 
-        assert n_snakes < grid_size[0]//3
+        # assert n_snakes < grid_size[0]//3
         assert n_snakes < 25
-        assert snake_size < grid_size[1]//2
+        # assert snake_size < grid_size[1]//2
         assert unit_gap >= 0 and unit_gap < unit_size
 
         self.snakes_remaining = n_snakes

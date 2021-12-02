@@ -158,6 +158,7 @@ class RL_Trainer(object):
             if self.save_agent:
                 exp_name_iter = self.params['exp_name'] + '_' + str(itr)
                 self.agent.save_agent(exp_name_iter)
+                # self.agent.load_agent(exp_name_iter)
 
     ####################################
     ####################################
