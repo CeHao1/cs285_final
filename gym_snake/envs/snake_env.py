@@ -68,7 +68,7 @@ class SnakeEnv(gym.Env):
 
     def obs_wapper(self):
         # only fetch one layer of image
-        single_layer_obs = self.last_obs[:,:,:]
+        single_layer_obs = self.last_obs
 
         # print('========================')
         # print(single_layer_obs)
@@ -76,11 +76,16 @@ class SnakeEnv(gym.Env):
         # single_layer_obs = self.last_obs
 
         wrapped_obs = np.ones(single_layer_obs.shape, dtype=np.uint8) * 255 - single_layer_obs
-        wrapped_obs = np.ndarray.flatten(wrapped_obs)
+
+        wrapped_obs = np.ndarray.flatten(wrapped_obs) 
         wrapped_obs.dtype = np.uint8
 
         
-        wrapped_obs = np.clip(wrapped_obs, 0, 1.0)
+        # wrapped_obs = np.clip(wrapped_obs, 0, 1.0)
+        idx = np.where(wrapped_obs==1)[0]
+        wrapped_obs[idx] = 0
+
+        wrapped_obs = np.clip(wrapped_obs, None, 1)
 
         # print('========================')
         # print(wrapped_obs)
