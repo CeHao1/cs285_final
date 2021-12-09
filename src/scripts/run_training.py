@@ -88,8 +88,8 @@ def main():
 
     parser.add_argument('--grid_size', type=float, default=[6, 6])
 
-    parser.add_argument('--dead', type=float, default=-1000)
-    parser.add_argument('--food', type=float, default=100)
+    parser.add_argument('--dead', type=float, default=-100)
+    parser.add_argument('--food', type=float, default=10)
     parser.add_argument('--idle', type=float, default=-0.01)
     parser.add_argument('--dist', type=float, default= 0.3)
 

@@ -11,6 +11,7 @@ from torch import distributions
 from src.infrastructure import pytorch_util as ptu
 from src.policies.base_policy import BasePolicy
 
+from gym_snake.envs.snake.discrete import Discrete
 
 class MLPPolicy(BasePolicy, nn.Module, metaclass=abc.ABCMeta):
 
@@ -77,6 +78,10 @@ class MLPPolicy(BasePolicy, nn.Module, metaclass=abc.ABCMeta):
         else:
             self.baseline = None
 
+
+        self.action_space = Discrete(4)
+        self.epsilon = 0
+
     ##################################
 
     def save(self, filepath):
@@ -86,6 +91,12 @@ class MLPPolicy(BasePolicy, nn.Module, metaclass=abc.ABCMeta):
 
     # query the policy with observation(s) to get selected action(s)
     def get_action(self, obs: np.ndarray) -> np.ndarray:
+
+        # epsilon 
+
+        if self.epsilon > 0 and np.random.random() < epsilon:
+            return [self.action_space.sample()]
+
         if len(obs.shape) > 1:
             observation = obs
         else:
