@@ -87,7 +87,7 @@ def main():
     tag_space = ['itr', 'Train_EnvstepsSoFar', 'Exploitation_Data_q-values', 'Train_AverageReturn', 'Eval_AverageReturn']
     tag_space += ['Eval_AverageFood', 'Train_AverageFood']
 
-    file_name_a = ['t1']
+    file_name_a = ['t2']
     data_dict_a = log_rewards(file_name_a, tag_space)
 
     iterations = data_dict_a['itr'][0]

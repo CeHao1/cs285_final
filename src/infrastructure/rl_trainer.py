@@ -59,6 +59,7 @@ class RL_Trainer(object):
 
         # Observation and action sizes
         ob_dim = self.env.grid_size[0] * self.env.grid_size[1] * 3
+        print('ob_dim ', ob_dim)
         ac_dim = self.env.action_space.n
         self.params['agent_params']['ac_dim'] = ac_dim
         self.params['agent_params']['ob_dim'] = ob_dim

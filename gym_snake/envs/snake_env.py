@@ -5,6 +5,8 @@ from gym.utils import seeding
 from gym_snake.envs.snake import Controller, Discrete
 import numpy as np
 
+import copy
+
 try:
     import matplotlib.pyplot as plt
     import matplotlib
@@ -101,14 +103,22 @@ class SnakeEnv(gym.Env):
 
         rotated_obs = self.rotate_obs(raw_obs)
 
+        # position of food, body, head, food
+        pos_head = np.where(rotated_obs[:,:,1] == 0)
+        pos_food = np.where(rotated_obs[:,:,2] == 0)
+
+        # print('head {}, food {}'.format(pos_head, pos_food))
+        # print(raw_obs.shape, '\n----------')
+
         wrapped_obs = np.ones(rotated_obs.shape, dtype=np.uint8) * 255 - rotated_obs
         wrapped_obs = np.ndarray.flatten(wrapped_obs) 
-        wrapped_obs.dtype = np.uint8
+
+        # wrapped_obs.dtype = np.uint8
 
         idx = np.where(wrapped_obs==1)[0]
         wrapped_obs[idx] = 0
         wrapped_obs = np.clip(wrapped_obs, None, 1)
-
+        
         return wrapped_obs
 
     def get_color(self):
@@ -123,6 +133,17 @@ class SnakeEnv(gym.Env):
         # print(color_map)
         return color_map
 
+    
+    def dir2num(self, direc):
+        if direc == Direction.U:
+            return 0
+        elif direc == Direction.R:
+            return 1 
+        elif direc == Direction.D:
+            return 2
+        elif direc == Direction.L:
+            return 3
+
     def rotate_obs(self, raw_obs):
         '''
         0: up
@@ -130,21 +151,14 @@ class SnakeEnv(gym.Env):
         2: down
         3: left
         '''
+        degs = self.dir2num(self.head_direction)
 
+        rotated_obs = np.zeros(raw_obs.shape)
+        for idx in range(3):
+            rotated_obs[:,:, idx] = np.rot90(raw_obs[:,:,idx], degs)
 
-        if self.head_direction == Direction.U:
-            rotated_obs = raw_obs
-
-        elif self.head_direction == Direction.R:
-            rotated_obs = [np.rot90(d1_obs, 1) for d1_obs in raw_obs] # 逆时针90
-
-        elif self.head_direction == Direction.D:
-            rotated_obs = [np.rot90(d1_obs, 2) for d1_obs in raw_obs] # 逆时针180
-
-        elif self.head_direction == Direction.L:
-            rotated_obs = [np.rot90(d1_obs, 3) for d1_obs in raw_obs] # 逆时针270
-
-        return np.array(rotated_obs)
+        # print('ori shape {}, rot shape {}'.format(raw_obs.shape, rotated_obs.shape))
+        return rotated_obs
 
     def de_rotate_action(self, action):
 
