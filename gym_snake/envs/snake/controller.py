@@ -107,23 +107,26 @@ class Controller():
             self.clear_count()
 
         else:
-            reward = self.idle_reward # idle
-            ate_food = 0
+            # reward = self.idle_reward # idle
+            
             empty_coord = snake.body.popleft()
             self.grid.connect(empty_coord, snake.body[0], self.grid.SPACE_COLOR)
             self.grid.draw(snake.head, snake.head_color)
 
+            
+            reward = self.idle_reward * self.get_count(self.grid.grid.copy())
+            ate_food = 0
+
             self.add_count(self.grid.grid.copy())
 
+            
+            
         self.grid.connect(snake.body[-1], snake.head, self.grid.BODY_COLOR)
 
         if self.dist_reward !=0: # dist reward
             food_coord = self.grid.food_coords()
             reward_dist = self.distance_reward(snake.head, food_coord)
             reward += reward_dist
-
-        # negative cost on the count
-        reward += -1 * self.get_count(self.grid.grid.copy())
 
         return reward, ate_food
 
@@ -218,4 +221,5 @@ class Controller():
             # print('state count is ', count)
             return count
         else:
-            return 0
+            # print('old state?')
+            return -1

@@ -94,8 +94,8 @@ def main():
     # rewards_dict_a = data_dict_a['Eval_AverageReturn']
 
     iterations = data_dict_a['itr'][0]
-    # rewards_dict_a = data_dict_a['Eval_AverageReturn']
-    rewards_dict_a = data_dict_a['Eval_AverageFood']
+    rewards_dict_a = data_dict_a['Eval_AverageReturn']
+    # rewards_dict_a = data_dict_a['Eval_AverageFood']
 
 
     rewards_dict = {}

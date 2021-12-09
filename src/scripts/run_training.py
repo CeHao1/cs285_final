@@ -78,16 +78,18 @@ def main():
     parser.add_argument('--n_layers', '-l', type=int, default=2)
     parser.add_argument('--size', '-s', type=int, default=64)
 
+    
+
     parser.add_argument('--seed', type=int, default=1)
     parser.add_argument('--no_gpu', '-ngpu', action='store_true')
     parser.add_argument('--which_gpu', '-gpu_id', default=0)
     parser.add_argument('--video_log_freq', type=int, default=-1)
     parser.add_argument('--scalar_log_freq', type=int, default=10)
 
-    parser.add_argument('--grid_size', type=float, default=[10, 10])
+    parser.add_argument('--grid_size', type=float, default=[6, 6])
 
-    parser.add_argument('--dead', type=float, default=-100)
-    parser.add_argument('--food', type=float, default=10)
+    parser.add_argument('--dead', type=float, default=-1000)
+    parser.add_argument('--food', type=float, default=100)
     parser.add_argument('--idle', type=float, default=-0.01)
     parser.add_argument('--dist', type=float, default= 0.3)
 
