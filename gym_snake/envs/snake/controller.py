@@ -119,8 +119,6 @@ class Controller():
 
             self.add_count(self.grid.grid.copy())
 
-            
-            
         self.grid.connect(snake.body[-1], snake.head, self.grid.BODY_COLOR)
 
         if self.dist_reward !=0: # dist reward

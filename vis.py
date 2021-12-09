@@ -85,24 +85,21 @@ def plot_reward(ax, iterations, rewards, name, color):
 
 def main():
     tag_space = ['itr', 'Train_EnvstepsSoFar', 'Exploitation_Data_q-values', 'Train_AverageReturn', 'Eval_AverageReturn']
-    tag_space += ['Eval_AverageFood']
+    tag_space += ['Eval_AverageFood', 'Train_AverageFood']
 
     file_name_a = ['t1']
     data_dict_a = log_rewards(file_name_a, tag_space)
 
-    # iterations = data_dict_a['Train_EnvstepsSoFar'][0]
-    # rewards_dict_a = data_dict_a['Eval_AverageReturn']
-
     iterations = data_dict_a['itr'][0]
-    rewards_dict_a = data_dict_a['Eval_AverageReturn']
-    # rewards_dict_a = data_dict_a['Eval_AverageFood']
 
+    rewards_dict = { 'Eval_AverageReturn': data_dict_a['Eval_AverageReturn'][0],
+                    'Train_AverageReturn': data_dict_a['Train_AverageReturn'][0]}
+    set_plot_env(iterations, rewards_dict, exp_name='reward')
 
-    rewards_dict = {}
-    for idx in range(len(file_name_a)):
-        rewards_dict[file_name_a[idx]] = rewards_dict_a[idx]
+    food_dict = {'Eval_AverageFood': data_dict_a['Eval_AverageFood'][0], 
+                 'Train_AverageFood': data_dict_a['Train_AverageFood'][0]}
+    set_plot_env(iterations, food_dict, exp_name='food')
 
-    set_plot_env(iterations, rewards_dict, exp_name='food')
 
 if __name__ == "__main__":
     main()

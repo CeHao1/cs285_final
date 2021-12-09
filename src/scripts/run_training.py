@@ -78,6 +78,8 @@ def main():
     parser.add_argument('--n_layers', '-l', type=int, default=2)
     parser.add_argument('--size', '-s', type=int, default=64)
 
+    parser.add_argument('--epsilon', '-epsilon', type=float, default=0.01)
+
     
 
     parser.add_argument('--seed', type=int, default=1)

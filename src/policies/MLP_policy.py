@@ -94,7 +94,8 @@ class MLPPolicy(BasePolicy, nn.Module, metaclass=abc.ABCMeta):
 
         # epsilon 
 
-        if self.epsilon > 0 and np.random.random() < epsilon:
+        if self.epsilon > 0 and np.random.random() < self.epsilon:
+            # print('is random')
             return [self.action_space.sample()]
 
         if len(obs.shape) > 1:
