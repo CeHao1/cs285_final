@@ -1,7 +1,7 @@
 from gym_snake.envs.snake import Snake
 from gym_snake.envs.snake import Grid
 import numpy as np
-
+import copy
 
 class Controller():
     """
@@ -53,8 +53,9 @@ class Controller():
             for i in range(n_foods):
                 self.grid.new_food()
 
+        self.clear_count()
 
-
+        
     def move_snake(self, direction, snake_idx):
         """
         Moves the specified snake according to the game's rules dependent on the direction.
@@ -89,16 +90,22 @@ class Controller():
             self.snakes[snake_idx] = None
             self.grid.cover(snake.head, snake.head_color) # Avoid miscount of grid.open_space
             self.grid.connect(snake.body.popleft(), snake.body[0], self.grid.SPACE_COLOR)
+
             reward = self.dead_reward
             ate_food = 0
+            self.clear_count()
+            
         # Check for reward
         elif self.grid.food_space(snake.head): # eat food
             self.grid.draw(snake.body[0], self.grid.BODY_COLOR) # Redraw tail
             self.grid.connect(snake.body[0], snake.body[1], self.grid.BODY_COLOR)
             self.grid.cover(snake.head, snake.head_color) # Avoid miscount of grid.open_space
+
             reward = self.food_reward
             ate_food = 1
             self.grid.new_food()
+            self.clear_count()
+
         else:
             reward = self.idle_reward # idle
             ate_food = 0
@@ -106,12 +113,17 @@ class Controller():
             self.grid.connect(empty_coord, snake.body[0], self.grid.SPACE_COLOR)
             self.grid.draw(snake.head, snake.head_color)
 
+            self.add_count(self.grid.grid.copy())
+
         self.grid.connect(snake.body[-1], snake.head, self.grid.BODY_COLOR)
 
         if self.dist_reward !=0: # dist reward
             food_coord = self.grid.food_coords()
             reward_dist = self.distance_reward(snake.head, food_coord)
             reward += reward_dist
+
+        # negative cost on the count
+        reward += -1 * self.get_count(self.grid.grid.copy())
 
         return reward, ate_food
 
@@ -176,7 +188,7 @@ class Controller():
             return self.grid.grid.copy(), rewards, done, info
 
 
-    # extra rewards
+    # ==================== extra rewards =================
 
     def distance_reward(self, head, food_coords):
         dist = np.sqrt( (head[0] - food_coords[:,0])**2 + (head[1] - food_coords[:,1])**2)
@@ -184,3 +196,26 @@ class Controller():
         dist_reward = 1/min_dist * self.dist_reward
         # print('min dist ', min_dist)
         return dist_reward
+
+
+    # ==================== count related functions =======================
+    def clear_count(self):
+        self.count_store = {}
+
+    def add_count(self, obs):
+        flatten_tuple_obs = tuple(np.ndarray.flatten(obs))
+        if flatten_tuple_obs in self.count_store:
+            self.count_store[flatten_tuple_obs] += 1
+            # print('same state again')
+        else:
+            # print('new state')
+            self.count_store.update({flatten_tuple_obs: 1})
+
+    def get_count(self, obs):
+        flatten_tuple_obs = tuple(np.ndarray.flatten(obs))
+        if flatten_tuple_obs in self.count_store:
+            count = self.count_store[flatten_tuple_obs]
+            # print('state count is ', count)
+            return count
+        else:
+            return 0

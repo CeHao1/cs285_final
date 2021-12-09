@@ -135,6 +135,9 @@ class RL_Trainer(object):
             all_logs = self.train_agent()
 
             # ======================================= log and eval ================================
+            
+
+
             # decide if agent should be saved
             if itr % self.params['save_agent_freq'] == 0 and self.params['save_agent_freq'] != -1:
                 self.save_agent = True
