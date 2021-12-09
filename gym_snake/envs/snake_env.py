@@ -11,6 +11,19 @@ try:
 except ImportError as e:
     raise error.DependencyNotInstalled("{}. (HINT: see matplotlib documentation for installation https://matplotlib.org/faq/installing_faq.html#installation".format(e))
 
+
+class Direction:
+    '''
+        0: up
+        1: right
+        2: down
+        3: left
+        '''
+    U = 0
+    R = 1
+    D = 2
+    L = 3
+
 class SnakeEnv(gym.Env):
     metadata = {'render.modes': ['human']}
 
@@ -41,13 +54,29 @@ class SnakeEnv(gym.Env):
         print('Set reward, dead: {}, food: {}, idle: {}, dist: {}'.format(dead, food, idle, dist))
 
     def step(self, action):
-        self.last_obs, rewards, done, info = self.controller.step(action)
+
+        de_rotated_action = self.de_rotate_action(action)
+
+        self.last_obs, rewards, done, info = self.controller.step(de_rotated_action)
+
+        a = de_rotated_action # update new heading
+        if a == 0:
+            self.head_direction = Direction.U
+        elif a == 1:
+            self.head_direction = Direction.R
+        elif a == 2:
+            self.head_direction = Direction.D
+        elif a == 3:
+            self.head_direction = Direction.L
+
         return self.obs_wapper(), rewards, done, info
 
     def reset(self):
         self.controller = Controller(self.grid_size, self.unit_size, self.unit_gap, self.snake_size, self.n_snakes, self.n_foods, random_init=self.random_init,
                                     dead_reward=self.dead_reward, food_reward=self.food_reward, idle_reward=self.idle_reward, dist_reward=self.dist_reward)
         self.last_obs = self.controller.grid.grid.copy()
+
+        self.head_direction = Direction.D
         return self.obs_wapper()
 
     def render(self, mode='human', close=False, frame_speed=.1):
@@ -68,27 +97,17 @@ class SnakeEnv(gym.Env):
 
     def obs_wapper(self):
         # only fetch one layer of image
-        single_layer_obs = self.last_obs
+        raw_obs = self.last_obs
 
-        # print('========================')
-        # print(single_layer_obs)
+        rotated_obs = self.rotate_obs(raw_obs)
 
-        # single_layer_obs = self.last_obs
-
-        wrapped_obs = np.ones(single_layer_obs.shape, dtype=np.uint8) * 255 - single_layer_obs
-
+        wrapped_obs = np.ones(rotated_obs.shape, dtype=np.uint8) * 255 - rotated_obs
         wrapped_obs = np.ndarray.flatten(wrapped_obs) 
         wrapped_obs.dtype = np.uint8
 
-        
-        # wrapped_obs = np.clip(wrapped_obs, 0, 1.0)
         idx = np.where(wrapped_obs==1)[0]
         wrapped_obs[idx] = 0
-
         wrapped_obs = np.clip(wrapped_obs, None, 1)
-
-        # print('========================')
-        # print(wrapped_obs)
 
         return wrapped_obs
 
@@ -103,3 +122,50 @@ class SnakeEnv(gym.Env):
 
         # print(color_map)
         return color_map
+
+    def rotate_obs(self, raw_obs):
+        '''
+        0: up
+        1: right
+        2: down
+        3: left
+        '''
+
+
+        if self.head_direction == Direction.U:
+            rotated_obs = raw_obs
+
+        elif self.head_direction == Direction.R:
+            rotated_obs = [np.rot90(d1_obs, 1) for d1_obs in raw_obs] # 逆时针90
+
+        elif self.head_direction == Direction.D:
+            rotated_obs = [np.rot90(d1_obs, 2) for d1_obs in raw_obs] # 逆时针180
+
+        elif self.head_direction == Direction.L:
+            rotated_obs = [np.rot90(d1_obs, 3) for d1_obs in raw_obs] # 逆时针270
+
+        return np.array(rotated_obs)
+
+    def de_rotate_action(self, action):
+
+        
+        if self.head_direction == Direction.U:
+            de_rotated_action = action + 0
+
+        elif self.head_direction == Direction.R:
+            de_rotated_action = action + 1
+
+        elif self.head_direction == Direction.D:
+            de_rotated_action = action + 2
+
+        elif self.head_direction == Direction.L:
+            de_rotated_action = action + 3
+
+        if de_rotated_action > 3:
+            de_rotated_action -= 4
+
+        # print('\n===\ninitial head direction ', self.head_direction)
+        # print('original action is ', action)
+        # print('de_rotated actin is ', de_rotated_action)
+
+        return de_rotated_action

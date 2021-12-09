@@ -2,6 +2,7 @@ from gym_snake.envs.snake import Snake
 from gym_snake.envs.snake import Grid
 import numpy as np
 
+
 class Controller():
     """
     This class combines the Snake, Food, and Grid classes to handle the game logic.
