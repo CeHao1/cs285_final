@@ -9,40 +9,40 @@ import matplotlib.pyplot as plt
 # %matplotlib inline
 
 
-def get_section_results(file, tags):
-    """
-        requires tensorflow==1.12.0
-    """
-    data_dict = {tag: [] for tag in tags}
-    # for e in tf.compat.v1.train.summary_iterator(file):
-    for e in tf.train.summary_iterator(file):
-        for v in e.summary.value:
-            # print(v.tag)
-            if v.tag in data_dict:
-                data_dict[v.tag].append(v.simple_value)
-    data_dict = {tag: np.array(data_dict[tag]) for tag in data_dict}
-    return data_dict
+def log_rewards(file_name_list):
 
-
-def log_rewards(file_name_list, tags):
-    data_tag_dict = {}
-    for tag in tags:
-        data_tag_dict[tag] = []
-    
-    for file_name in file_name_list:
-        data = log_data(file_name, tags)
-        for tag in tags:
-            data_tag_dict[tag].append(data[tag])
+    file_name = file_name_list[0]
+    data = log_data(file_name)
+    # data_tag_dict[tag].append(data[tag])
         
-    return data_tag_dict
+    return data
 
-def log_data(file_name, tags):
+
+def log_data(file_name):
     logdir = 'data/*' + file_name + '*/events*'
     print('search file name: ', logdir)
     eventfile = glob.glob(logdir)[0]
     print('found file name: ', eventfile)
 
-    data_dict = get_section_results(eventfile, tags)
+    data_dict = get_section_results(eventfile)
+    return data_dict
+
+
+def get_section_results(file):
+    """
+        requires tensorflow==1.12.0
+    """
+    data_dict = {}
+
+    for e in tf.train.summary_iterator(file):
+        for v in e.summary.value:
+            # print(v.tag)
+            if v.tag not in data_dict:
+                data_dict[v.tag] = []
+
+            data_dict[v.tag].append(v.simple_value)
+            
+    # data_dict = {tag: np.array(data_dict[tag]) for tag in data_dict}
     return data_dict
 
 
@@ -57,7 +57,8 @@ def set_plot_env(iterations, rewards_dict, exp_name, curve_names=None):
 
     for idx, name in enumerate(rewards_dict):       
         curve_name = curve_names[idx] if curve_names is not None else name    
-        plot_reward(ax, iterations, rewards_dict[name], curve_name, color=color_list[idx])
+        plot_reward(ax, iterations, rewards_dict[name][0], curve_name, color=color_list[idx])
+        plot_std(ax, iterations, rewards_dict[name][0], rewards_dict[name][1], color=color_list[idx])
 
     # ax.legend(loc='center right')
     # plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
@@ -77,28 +78,34 @@ def set_plot_env(iterations, rewards_dict, exp_name, curve_names=None):
 def plot_reward(ax, iterations, rewards, name, color):
     rewards = np.array(rewards)
     min_len = min(len(iterations), len(rewards))
-#     iterations = np.array(iterations).T
-#     rewards = np.array(rewards).T
-
     ax.plot(iterations[:min_len], rewards[:min_len], color=color, label=name)
+
+def plot_std(ax, iterations, mean, std, color):
+    up = np.array(mean) + np.array(std)
+    dn = np.array(mean) - np.array(std)
+
+    min_len = min(len(iterations), len(mean))
+    ax.fill_between(iterations, dn, up, alpha=0.2)
 
 
 def main():
-    tag_space = ['itr', 'Train_EnvstepsSoFar', 'Exploitation_Data_q-values', 'Train_AverageReturn', 'Eval_AverageReturn']
-    tag_space += ['Eval_AverageFood', 'Train_AverageFood']
 
-    file_name_a = ['t2']
-    data_dict_a = log_rewards(file_name_a, tag_space)
+    file_name_a = ['l6']
+    
+    data_dict_a = log_rewards(file_name_a)
 
-    iterations = data_dict_a['itr'][0]
+    # print('data_dict_a ', data_dict_a.keys())
 
-    rewards_dict = { 'Eval_AverageReturn': data_dict_a['Eval_AverageReturn'][0],
-                    'Train_AverageReturn': data_dict_a['Train_AverageReturn'][0]}
-    set_plot_env(iterations, rewards_dict, exp_name='reward')
+    iterations = data_dict_a['itr']
 
-    food_dict = {'Eval_AverageFood': data_dict_a['Eval_AverageFood'][0], 
-                 'Train_AverageFood': data_dict_a['Train_AverageFood'][0]}
-    set_plot_env(iterations, food_dict, exp_name='food')
+    rewards_dict = { 'Eval_AverageReturn': (data_dict_a['Eval_AverageReturn'], data_dict_a['Eval_StdReturn']),
+                    'Train_AverageReturn': (data_dict_a['Train_AverageReturn'], data_dict_a['Train_StdReturn'])}
+    set_plot_env(iterations, rewards_dict, exp_name='reward_' +  file_name_a[0])
+
+    food_dict = {'Eval_AverageFood': (data_dict_a['Eval_AverageFood'], data_dict_a['Eval_StdFood']),
+                 'Train_AverageFood' : (data_dict_a['Train_AverageFood'], data_dict_a['Train_StdFood'])    }
+
+    set_plot_env(iterations, food_dict, exp_name='food_' + file_name_a[0])
 
 
 if __name__ == "__main__":

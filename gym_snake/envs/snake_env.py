@@ -111,6 +111,7 @@ class SnakeEnv(gym.Env):
         # print(raw_obs.shape, '\n----------')
 
         wrapped_obs = np.ones(rotated_obs.shape, dtype=np.uint8) * 255 - rotated_obs
+        
         wrapped_obs = np.ndarray.flatten(wrapped_obs) 
 
         # wrapped_obs.dtype = np.uint8
