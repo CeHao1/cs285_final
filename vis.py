@@ -90,7 +90,7 @@ def plot_std(ax, iterations, mean, std, color):
 
 def main():
 
-    file_name_a = ['l6']
+    file_name_a = ['l6ep1s2']
     
     data_dict_a = log_rewards(file_name_a)
 
@@ -100,18 +100,18 @@ def main():
 
     rewards_dict = { 'Eval_AverageReturn': (data_dict_a['Eval_AverageReturn'], data_dict_a['Eval_StdReturn']),
                     'Train_AverageReturn': (data_dict_a['Train_AverageReturn'], data_dict_a['Train_StdReturn'])}
-    set_plot_env(iterations, rewards_dict, exp_name='reward_' +  file_name_a[0])
+    set_plot_env(iterations, rewards_dict, exp_name= file_name_a[0] + 'reward')
 
     food_dict = {'Eval_AverageFood': (data_dict_a['Eval_AverageFood'], data_dict_a['Eval_StdFood']),
                  'Train_AverageFood' : (data_dict_a['Train_AverageFood'], data_dict_a['Train_StdFood'])    }
 
-    set_plot_env(iterations, food_dict, exp_name='food_' + file_name_a[0])
+    set_plot_env(iterations, food_dict, exp_name= file_name_a[0] + '_food')
 
 
     ep_len_dist = {'Eval_AverageEpLen' : (data_dict_a['Eval_AverageEpLen'], data_dict_a['Eval_StdEpLen']),
                  'Train_AverageEpLen': (data_dict_a['Train_AverageEpLen'], data_dict_a['Train_StdEpLen'])}
 
-    set_plot_env(iterations, ep_len_dist, exp_name='ep_len_' + file_name_a[0])
+    set_plot_env(iterations, ep_len_dist, exp_name= file_name_a[0] + '_ep_len')
 
 if __name__ == "__main__":
     main()

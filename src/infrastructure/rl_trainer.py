@@ -48,7 +48,7 @@ class RL_Trainer(object):
         self.env = gym.make('snake-v0')
         self.env.set_parameters(grid_size=self.params['grid_size'])
         self.env.set_reward(dead=self.params['dead'], food=self.params['food'], idle=self.params['idle'], dist=self.params['dist'])
-        self.env.seed(seed)
+        # self.env.seed(seed)
 
         # Maximum length for episodes
         self.params['ep_len'] = self.params['ep_len'] or self.env.spec.max_episode_steps
