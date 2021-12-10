@@ -250,6 +250,7 @@ class RL_Trainer(object):
             logs["Eval_MaxReturn"] = np.max(eval_returns)
             logs["Eval_MinReturn"] = np.min(eval_returns)
             logs["Eval_AverageEpLen"] = np.mean(eval_ep_lens)
+            logs["Eval_StdEpLen"] = np.std(eval_ep_lens)
 
             logs["Eval_AverageFood"] = np.mean(eval_ate_foods)
             logs["Eval_StdFood"] = np.std(eval_ate_foods)
@@ -261,6 +262,7 @@ class RL_Trainer(object):
             logs["Train_MaxReturn"] = np.max(train_returns)
             logs["Train_MinReturn"] = np.min(train_returns)
             logs["Train_AverageEpLen"] = np.mean(train_ep_lens)
+            logs["Train_StdEpLen"] = np.std(train_ep_lens)
             
             logs["Train_AverageFood"] = np.mean(train_ate_foods)
             logs["Train_StdFood"] = np.std(train_ate_foods)

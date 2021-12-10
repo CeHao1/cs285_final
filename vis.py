@@ -64,7 +64,7 @@ def set_plot_env(iterations, rewards_dict, exp_name, curve_names=None):
     # plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
     plt.legend()
     ax.set_xlabel('Time steps')
-    ax.set_ylabel('eval average return')
+    ax.set_ylabel(exp_name)
     ax.set_title(exp_name +' experiment')
 
     exp_dir = 'plots/'
@@ -107,6 +107,11 @@ def main():
 
     set_plot_env(iterations, food_dict, exp_name='food_' + file_name_a[0])
 
+
+    ep_len_dist = {'Eval_AverageEpLen' : (data_dict_a['Eval_AverageEpLen'], data_dict_a['Eval_StdEpLen']),
+                 'Train_AverageEpLen': (data_dict_a['Train_AverageEpLen'], data_dict_a['Train_StdEpLen'])}
+
+    set_plot_env(iterations, ep_len_dist, exp_name='ep_len_' + file_name_a[0])
 
 if __name__ == "__main__":
     main()
