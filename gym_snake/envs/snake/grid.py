@@ -17,9 +17,21 @@ class Grid():
     # FOOD_COLOR = np.array([0,0,255], dtype=np.uint8)
     # SPACE_COLOR = np.array([0,255,0], dtype=np.uint8)
 
-    BODY_COLOR = np.array([200, 200, 255], dtype=np.uint8)
-    HEAD_COLOR = np.array([100, 100, 255], dtype=np.uint8)
-    FOOD_COLOR = np.array([0, 255,255], dtype=np.uint8)
+    # BODY_COLOR = np.array([200, 200, 255], dtype=np.uint8)
+    # HEAD_COLOR = np.array([100, 100, 255], dtype=np.uint8)
+    # FOOD_COLOR = np.array([0, 255,255], dtype=np.uint8)
+    # SPACE_COLOR = np.array([255,255,255], dtype=np.uint8)
+
+    # can
+    # BODY_COLOR = np.array([200, 200, 0], dtype=np.uint8)
+    # HEAD_COLOR = np.array([100, 100, 0], dtype=np.uint8)
+    # FOOD_COLOR = np.array([0, 255,0], dtype=np.uint8)
+    # SPACE_COLOR = np.array([255,255,255], dtype=np.uint8)
+
+
+    BODY_COLOR = np.array([0, 254, 254], dtype=np.uint8)
+    HEAD_COLOR = np.array([254, 0, 254], dtype=np.uint8)
+    FOOD_COLOR = np.array([255, 255,0], dtype=np.uint8)
     SPACE_COLOR = np.array([255,255,255], dtype=np.uint8)
 
     def __init__(self, grid_size=[30,30], unit_size=10, unit_gap=1):
@@ -192,6 +204,15 @@ class Grid():
 
         for i in range(len(snake.body)):
             self.erase(snake.body.popleft())
+
+    def food_coords(self):
+        food_coord = []
+        for i in range(self.grid_size[0]):
+            for j in range(self.grid_size[1]):
+                if self.food_space([i,j]):
+                    food_coord.append([i,j])
+                    # print('food is on ', [i,j])
+        return np.array(food_coord)
 
     def food_space(self, coord):
         """
