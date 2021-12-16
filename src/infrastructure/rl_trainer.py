@@ -48,7 +48,7 @@ class RL_Trainer(object):
         self.env = gym.make('snake-v0')
         self.env.set_parameters(grid_size=self.params['grid_size'])
         self.env.set_reward(dead=self.params['dead'], food=self.params['food'], idle=self.params['idle'], dist=self.params['dist'])
-        self.env.seed(seed)
+        # self.env.seed(seed)
 
         # Maximum length for episodes
         self.params['ep_len'] = self.params['ep_len'] or self.env.spec.max_episode_steps
@@ -59,6 +59,7 @@ class RL_Trainer(object):
 
         # Observation and action sizes
         ob_dim = self.env.grid_size[0] * self.env.grid_size[1] * 3
+        print('ob_dim ', ob_dim)
         ac_dim = self.env.action_space.n
         self.params['agent_params']['ac_dim'] = ac_dim
         self.params['agent_params']['ob_dim'] = ob_dim
@@ -94,6 +95,8 @@ class RL_Trainer(object):
             if itr % print_period == 0:
                 print("\n\n********** Iteration %i ************"%itr)
 
+
+            # ======================================= pre log flags ================================
             # decide if videos should be rendered/logged at this iteration
             if itr % self.params['video_log_freq'] == 0 and self.params['video_log_freq'] != -1:
                 self.logvideo = True
@@ -108,6 +111,7 @@ class RL_Trainer(object):
             else:
                 self.logmetrics = False
 
+            # ======================================= training core ================================
             # collect trajectories, to be used for training
             use_batchsize = self.params['batch_size']
             if itr==0:
@@ -131,6 +135,21 @@ class RL_Trainer(object):
                 print("\nTraining agent...")
             all_logs = self.train_agent()
 
+            # ======================================= log and eval ================================
+            
+
+
+            # decide if agent should be saved
+            if itr % self.params['save_agent_freq'] == 0 and self.params['save_agent_freq'] != -1:
+                self.save_agent = True
+            else:
+                self.save_agent = False
+
+            # decide if agent should be loaded
+            if self.params['load_agent_name'] != '':
+                self.agent.load_agent(self.params['load_agent_name'])
+                self.params['load_agent_name'] = '' # just load once
+
             # log/save
             if self.logvideo or self.logmetrics:
                 # perform logging
@@ -139,6 +158,10 @@ class RL_Trainer(object):
 
                 if self.params['save_params']:
                     self.agent.save('{}/agent_itr_{}.pt'.format(self.params['logdir'], itr))
+
+            if self.save_agent:
+                exp_name_iter = self.params['exp_name'] + '_' + str(itr)
+                self.agent.save_agent(exp_name_iter)
 
     ####################################
     ####################################
@@ -156,6 +179,7 @@ class RL_Trainer(object):
         """
 
         # print("\nCollecting data to be used for training...")
+        collect_policy.epsilon = self.params['epsilon']
         paths, envsteps_this_batch = utils.sample_trajectories(self.env, collect_policy, self.params['batch_size'], self.params['ep_len'])
 
         # collect more rollouts with the same policy, to be saved as videos in tensorboard
@@ -177,42 +201,7 @@ class RL_Trainer(object):
 
     ####################################
     ####################################
-    def perform_dqn_logging(self, all_logs):
-        last_log = all_logs[-1]
-
-        episode_rewards = get_wrapper_by_name(self.env, "Monitor").get_episode_rewards()
-        if len(episode_rewards) > 0:
-            self.mean_episode_reward = np.mean(episode_rewards[-100:])
-        if len(episode_rewards) > 100:
-            self.best_mean_episode_reward = max(self.best_mean_episode_reward, self.mean_episode_reward)
-
-        logs = OrderedDict()
-
-        logs["Train_EnvstepsSoFar"] = self.agent.t
-        print("Timestep %d" % (self.agent.t,))
-        if self.mean_episode_reward > -5000:
-            logs["Train_AverageReturn"] = np.mean(self.mean_episode_reward)
-        print("mean reward (100 episodes) %f" % self.mean_episode_reward)
-        if self.best_mean_episode_reward > -5000:
-            logs["Train_BestReturn"] = np.mean(self.best_mean_episode_reward)
-        print("best mean reward %f" % self.best_mean_episode_reward)
-
-        if self.start_time is not None:
-            time_since_start = (time.time() - self.start_time)
-            print("running time %f" % time_since_start)
-            logs["TimeSinceStart"] = time_since_start
-
-        logs.update(last_log)
-
-        sys.stdout.flush()
-
-        for key, value in logs.items():
-            print('{} : {}'.format(key, value))
-            self.logger.log_scalar(value, key, self.agent.t)
-        print('Done logging...\n\n')
-
-        self.logger.flush()
-
+   
     def perform_logging(self, itr, paths, eval_policy, train_video_paths, all_logs):
 
         last_log = all_logs[-1]
@@ -221,6 +210,7 @@ class RL_Trainer(object):
 
         # collect eval trajectories, for logging
         print("\nCollecting data for eval...")
+        eval_policy.epsilon = 0
         eval_paths, eval_envsteps_this_batch = utils.sample_trajectories(self.env, eval_policy, self.params['eval_batch_size'], self.params['ep_len'])
 
         # save eval rollouts as videos in tensorboard event file
@@ -230,6 +220,7 @@ class RL_Trainer(object):
 
             #save train/eval videos
             print('\nSaving train rollouts as videos...')
+            self.fps = 10
             self.logger.log_paths_as_videos(train_video_paths, itr, fps=self.fps, max_videos_to_save=MAX_NVIDEO,
                                             video_title='train_rollouts')
             self.logger.log_paths_as_videos(eval_video_paths, itr, fps=self.fps,max_videos_to_save=MAX_NVIDEO,
@@ -247,22 +238,40 @@ class RL_Trainer(object):
             train_ep_lens = [len(path["reward"]) for path in paths]
             eval_ep_lens = [len(eval_path["reward"]) for eval_path in eval_paths]
 
+            # ate_foods
+            train_ate_foods = [path["ate_foods"].sum() for path in paths]
+            eval_ate_foods = [eval_path["ate_foods"].sum() for eval_path in eval_paths]
+
             # decide what to log
             logs = OrderedDict()
+            logs['itr'] = itr
             logs["Eval_AverageReturn"] = np.mean(eval_returns)
             logs["Eval_StdReturn"] = np.std(eval_returns)
             logs["Eval_MaxReturn"] = np.max(eval_returns)
             logs["Eval_MinReturn"] = np.min(eval_returns)
             logs["Eval_AverageEpLen"] = np.mean(eval_ep_lens)
+            logs["Eval_StdEpLen"] = np.std(eval_ep_lens)
+
+            logs["Eval_AverageFood"] = np.mean(eval_ate_foods)
+            logs["Eval_StdFood"] = np.std(eval_ate_foods)
+            logs["Eval_MaxFood"] = np.max(eval_ate_foods)
+            logs["Eval_MinFood"] = np.min(eval_ate_foods)
 
             logs["Train_AverageReturn"] = np.mean(train_returns)
             logs["Train_StdReturn"] = np.std(train_returns)
             logs["Train_MaxReturn"] = np.max(train_returns)
             logs["Train_MinReturn"] = np.min(train_returns)
             logs["Train_AverageEpLen"] = np.mean(train_ep_lens)
+            logs["Train_StdEpLen"] = np.std(train_ep_lens)
+            
+            logs["Train_AverageFood"] = np.mean(train_ate_foods)
+            logs["Train_StdFood"] = np.std(train_ate_foods)
+            logs["Train_MaxFood"] = np.max(train_ate_foods)
+            logs["Train_MinFood"] = np.min(train_ate_foods)
 
             logs["Train_EnvstepsSoFar"] = self.total_envsteps
             logs["TimeSinceStart"] = time.time() - self.start_time
+
             logs.update(last_log)
 
             if itr == 0:

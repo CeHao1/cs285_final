@@ -29,14 +29,17 @@ def calculate_mean_prediction_error(env, action_sequence, models, data_statistic
 def perform_actions(env, actions):
     ob = env.reset()
     obs, acs, rewards, next_obs, terminals, image_obs = [], [], [], [], [], []
+    infos = []
+
     steps = 0
     for ac in actions:
         obs.append(ob)
         acs.append(ac)
-        ob, rew, done, _ = env.step(ac)
+        ob, rew, done, info = env.step(ac)
         # add the observation after taking a step to next_obs
         next_obs.append(ob)
         rewards.append(rew)
+        infos.append(info)
         steps += 1
         # If the episode ended, the corresponding terminal value is 1
         # otherwise, it is 0
@@ -46,7 +49,7 @@ def perform_actions(env, actions):
         else:
             terminals.append(0)
 
-    return Path(obs, image_obs, acs, rewards, next_obs, terminals)
+    return Path(obs, image_obs, acs, rewards, next_obs, terminals, infos)
 
 def mean_squared_error(a, b):
     return np.mean((a-b)**2)
@@ -61,6 +64,7 @@ def sample_trajectory(env, policy, max_path_length, render=False, render_mode=('
 
     # init vars
     obs, acs, rewards, next_obs, terminals, image_obs = [], [], [], [], [], []
+    infos = []
     steps = 0
     while True:
 
@@ -82,12 +86,13 @@ def sample_trajectory(env, policy, max_path_length, render=False, render_mode=('
         acs.append(ac)
 
         # take that action and record results
-        ob, rew, done, _ = env.step(ac)
+        ob, rew, done, info = env.step(ac)
 
         # record result of taking that action
         steps += 1
         next_obs.append(ob)
         rewards.append(rew)
+        infos.append(info)
 
         # end the rollout if the rollout ended
         # rollout can end due to done, or due to max_path_length
@@ -97,7 +102,7 @@ def sample_trajectory(env, policy, max_path_length, render=False, render_mode=('
         if rollout_done:
             break
 
-    return Path(obs, image_obs, acs, rewards, next_obs, terminals)
+    return Path(obs, image_obs, acs, rewards, next_obs, terminals, infos)
 
 def sample_trajectories(env, policy, min_timesteps_per_batch, max_path_length, render=False, render_mode=('rgb_array')):
     """
@@ -133,11 +138,15 @@ def sample_n_trajectories(env, policy, ntraj, max_path_length, render=False, ren
 ############################################
 ############################################
 
-def Path(obs, image_obs, acs, rewards, next_obs, terminals):
+def Path(obs, image_obs, acs, rewards, next_obs, terminals, infos=None):
     """
         Take info (separate arrays) from a single rollout
         and return it in a single dictionary
     """
+
+    # fetch ate_foods from info
+    ate_foods = np.array([info["ate_foods"] for info in infos], dtype=np.float32)
+
     if image_obs != []:
         image_obs = np.stack(image_obs, axis=0)
     return {"observation" : np.array(obs, dtype=np.float32),
@@ -145,7 +154,8 @@ def Path(obs, image_obs, acs, rewards, next_obs, terminals):
             "reward" : np.array(rewards, dtype=np.float32),
             "action" : np.array(acs, dtype=np.float32),
             "next_observation": np.array(next_obs, dtype=np.float32),
-            "terminal": np.array(terminals, dtype=np.float32)}
+            "terminal": np.array(terminals, dtype=np.float32),
+            "ate_foods": ate_foods}
 
 
 def convert_listofrollouts(paths):
