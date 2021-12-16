@@ -62,10 +62,10 @@ def set_plot_env(iterations, rewards_dict, exp_name, curve_names=None):
 
     # ax.legend(loc='center right')
     # plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
-    plt.legend()
-    ax.set_xlabel('Time steps')
-    ax.set_ylabel(exp_name)
-    ax.set_title(exp_name +' experiment')
+    plt.legend(fontsize=15)
+    ax.set_xlabel('Iterations',fontsize=15)
+    ax.set_ylabel(exp_name, fontsize=15)
+    ax.set_title(exp_name, fontsize=15)
 
     exp_dir = 'plots/'
     if not os.path.exists(exp_dir):
@@ -90,7 +90,7 @@ def plot_std(ax, iterations, mean, std, color):
 
 def main():
 
-    file_name_a = ['l6ep1s2']
+    file_name_a = ['stage2']
     
     data_dict_a = log_rewards(file_name_a)
 
@@ -100,18 +100,18 @@ def main():
 
     rewards_dict = { 'Eval_AverageReturn': (data_dict_a['Eval_AverageReturn'], data_dict_a['Eval_StdReturn']),
                     'Train_AverageReturn': (data_dict_a['Train_AverageReturn'], data_dict_a['Train_StdReturn'])}
-    set_plot_env(iterations, rewards_dict, exp_name= file_name_a[0] + 'reward')
+    set_plot_env(iterations, rewards_dict, exp_name= file_name_a[0] + ' reward')
 
     food_dict = {'Eval_AverageFood': (data_dict_a['Eval_AverageFood'], data_dict_a['Eval_StdFood']),
                  'Train_AverageFood' : (data_dict_a['Train_AverageFood'], data_dict_a['Train_StdFood'])    }
 
-    set_plot_env(iterations, food_dict, exp_name= file_name_a[0] + '_food')
+    set_plot_env(iterations, food_dict, exp_name= file_name_a[0] + ' food')
 
 
     ep_len_dist = {'Eval_AverageEpLen' : (data_dict_a['Eval_AverageEpLen'], data_dict_a['Eval_StdEpLen']),
                  'Train_AverageEpLen': (data_dict_a['Train_AverageEpLen'], data_dict_a['Train_StdEpLen'])}
 
-    set_plot_env(iterations, ep_len_dist, exp_name= file_name_a[0] + '_ep_len')
+    set_plot_env(iterations, ep_len_dist, exp_name= file_name_a[0] + ' epoch_length')
 
 if __name__ == "__main__":
     main()
